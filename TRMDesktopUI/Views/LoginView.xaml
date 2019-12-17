@@ -18,6 +18,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" 
@@ -30,30 +31,45 @@
                    Login Form
         </TextBlock>
         
+        <!-- Error Message Row -->
+        <TextBlock x:Name="ErrorMessage" 
+                   Visibility="{Binding IsErrorVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2" 
+                   Margin="0 0 0 20"
+                   Foreground="Red"
+                   MaxWidth="300"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   />
+
         <!-- UserName Row -->
-        <TextBlock Grid.Row="1"
-                   Grid.Column="1">
-            User Name:
+        <TextBlock Grid.Row="2"
+                   Grid.Column="1"
+                   Margin="0 0 5 10">
+            UserName:
         </TextBlock>
         <TextBox x:Name="UserName"
-                 Grid.Row="1"
+                 Grid.Row="2"
                  Grid.Column="2"
-                 MinWidth="150"
+                 MinWidth="350"
                  Margin="0 0 0 10"/>
 
         <!-- Password Row -->
-        <TextBlock Grid.Row="2"
-                   Grid.Column="1">
+        <TextBlock Grid.Row="3"
+                   Grid.Column="1"
+                   Margin="0 0 5 10">
             Password:
         </TextBlock>
         <PasswordBox x:Name="Password"
-                     Grid.Row="2"
+                     Grid.Row="3"
                      Grid.Column="2"
-                     MinWidth="150"
-                     Margin="0 0 0 10"/>
+                     MinWidth="350"
+                     Margin="0 0 0 20"/>
         
         <!-- Login Row -->
-        <Button Grid.Row="3"
+        <Button Grid.Row="4"
                 Grid.Column="1"
                 Grid.ColumnSpan="2"
                 Padding="20 5"
@@ -61,5 +77,15 @@
                 x:Name="LogIn">
             Log in
         </Button>
+
+        <!-- Display Processing... -->
+        <TextBlock Grid.Row="4"
+                   Grid.Column="3"
+                   Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                   Margin="0 0 5 10"
+                   Foreground="Orange">
+            Processing...
+        </TextBlock>
+        
     </Grid>
 </UserControl>

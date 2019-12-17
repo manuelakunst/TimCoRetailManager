@@ -32,11 +32,35 @@ namespace TRMDesktopUI.ViewModels
 		public string Password
 		{
 			get { return _password; }
-			set 
+			set
 			{
 				_password = value;
 				NotifyOfPropertyChange(() => Password);
 				NotifyOfPropertyChange(() => CanLogIn);
+			}
+		}
+
+		public bool IsErrorVisible
+		{
+			get 
+			{
+				var output = false;
+				if (_errorMessage?.Length > 0)
+					output = true;
+				return output;
+			}
+		}
+
+		private string _errorMessage;
+
+		public string ErrorMessage
+		{
+			get { return _errorMessage; }
+			set 
+			{
+				_errorMessage = value;
+				NotifyOfPropertyChange(() => ErrorMessage);
+				NotifyOfPropertyChange(() => IsErrorVisible);
 			}
 		}
 
@@ -51,16 +75,32 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
+		private bool _isProcessing = false;
+		public bool IsProcessing
+		{
+			get { return _isProcessing; }
+			set
+			{
+				_isProcessing = value;
+				NotifyOfPropertyChange(() => IsProcessing);
+			}
+		}
+
 		public async Task LogIn()
 		{
 			try
 			{
+				ErrorMessage = string.Empty;
+				IsProcessing = true;
 				var result = await _apiHelper.Authenticate(UserName, Password);
 			}
 			catch (Exception ex)
 			{
-
-				Console.WriteLine(ex.Message);
+				ErrorMessage = ex.Message;
+			}
+			finally
+			{
+				IsProcessing = false;
 			}
 		}
 	}
