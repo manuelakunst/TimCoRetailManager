@@ -34,9 +34,9 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 		
-		private string _itemQty;
+		private int _itemQty;
 
-		public string ItemQuantity
+		public int ItemQuantity
 		{
 			get { return _itemQty; }
 			set
