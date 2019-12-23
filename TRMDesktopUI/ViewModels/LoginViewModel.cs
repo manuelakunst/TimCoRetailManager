@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,25 @@ namespace TRMDesktopUI.ViewModels
 		{
 			_apiHelper = apiHelper;
 			_events = events;
+
+			InitTestUserdata();
+		}
+
+		private void InitTestUserdata()
+		{
+#if DEBUG
+			var currentDir = Environment.CurrentDirectory;
+			var topDir = currentDir.Replace("TRMDesktopUI\\bin\\Debug", "");
+			string path = topDir + "myLoginForDebug.txt";
+
+			// This text is added only once to the file.
+			if (File.Exists(path))
+			{
+				string[] lines = File.ReadAllLines(path);
+				UserName = lines[0];
+				Password = lines[1];
+			}
+#endif
 		}
 
 		public string UserName

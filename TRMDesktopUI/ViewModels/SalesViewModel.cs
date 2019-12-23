@@ -217,9 +217,24 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public void CheckOut()
+		public async Task CheckOut()
 		{
+			IsProcessing = true;
 
+			await Task.Delay(3000);
+
+			IsProcessing = false;
+		}
+
+		private bool _isProcessing = false;
+		public bool IsProcessing
+		{
+			get { return _isProcessing; }
+			set
+			{
+				_isProcessing = value;
+				NotifyOfPropertyChange(() => IsProcessing);
+			}
 		}
 	}
 }

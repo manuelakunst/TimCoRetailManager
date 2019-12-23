@@ -50,11 +50,12 @@
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="{Binding ProductName}"/>
                         <StackPanel Orientation="Horizontal">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0 0 5 0">
                                 <TextBlock Text="Price: " FontSize="14"/>
                                 <TextBlock Text="{Binding RetailPrice, StringFormat='{}{0:C}'}" FontSize="14"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="Qty: " FontSize="14"/>
                                 <TextBlock Text="{Binding QuantityInStock}" FontSize="14"/>
                             </StackPanel>
@@ -113,5 +114,14 @@
         <Button x:Name="CheckOut" Grid.Row="6" Grid.Column="2" 
                 Content="Check Out"
                 Margin="0 20 0 0" Padding="5"/>
+
+        <!-- Display Processing... -->
+        <TextBlock Grid.Row="6"
+                   Grid.Column="3"
+                   Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                   Margin="0 0 5 10"
+                   Foreground="Orange">
+            Processing...
+        </TextBlock>
     </Grid>
 </UserControl>
