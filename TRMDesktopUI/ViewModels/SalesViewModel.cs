@@ -14,11 +14,13 @@ namespace TRMDesktopUI.ViewModels
 	public class SalesViewModel : Screen
 	{
 		private readonly IProductEndpoint _productEndpoint;
+		private readonly ISaleEndpoint _saleEndpoint;
 		private IConfigHelper _configHelper;
 
-		public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
+		public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, ISaleEndpoint saleEndpoint)
 		{
 			_productEndpoint = productEndpoint;
+			_saleEndpoint = saleEndpoint;
 			_configHelper = configHelper;
 		}
 
@@ -51,7 +53,7 @@ namespace TRMDesktopUI.ViewModels
 		public ProductModel SelectedProduct
 		{
 			get { return _selectedProduct; }
-			set 
+			set
 			{
 				_selectedProduct = value;
 				NotifyOfPropertyChange(() => SelectedProduct);
@@ -71,7 +73,7 @@ namespace TRMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Cart);
 			}
 		}
-		
+
 		private int _itemQty = 1;
 
 		public int ItemQuantity
@@ -114,7 +116,7 @@ namespace TRMDesktopUI.ViewModels
 		private decimal CalculateTax()
 		{
 			decimal taxAmount = 0;
-			var taxRate = _configHelper.GetTaxRate() / 100;
+			var taxRate = _configHelper.GetTaxRate();
 
 			taxAmount = Cart
 						.Where(x => x.Product.IsTaxable)
@@ -142,8 +144,6 @@ namespace TRMDesktopUI.ViewModels
 			get
 			{
 				var output = false;
-
-				// check, if something is selected and quantity > 0
 				if (ItemQuantity > 0)
 				{
 					if (SelectedProduct?.QuantityInStock >= ItemQuantity)
@@ -181,6 +181,7 @@ namespace TRMDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
 			NotifyOfPropertyChange(() => Cart);
+			NotifyOfPropertyChange(() => CanCheckOut);
 		}
 
 		public bool CanRemoveFromCart
@@ -202,6 +203,7 @@ namespace TRMDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
 			NotifyOfPropertyChange(() => Cart);
+			NotifyOfPropertyChange(() => CanCheckOut);
 		}
 
 		public bool CanCheckOut
@@ -209,9 +211,7 @@ namespace TRMDesktopUI.ViewModels
 			get
 			{
 				var output = false;
-
-				// make sure, something is in the cart ???
-				if (true)
+				if (Cart.Count > 0)
 					output = true;
 				return output;
 			}
@@ -219,11 +219,28 @@ namespace TRMDesktopUI.ViewModels
 
 		public async Task CheckOut()
 		{
-			IsProcessing = true;
+			var sale = new SaleModel();
+			foreach (var item in Cart)
+			{
+				sale.SaleDetails.Add(new SaleDetailsModel
+				{
+					ProductId = item.Product.Id,
+					Quantity = item.QuantityInCart
+				});
+			}
 
-			await Task.Delay(3000);
-
-			IsProcessing = false;
+			// all to the API
+			try {
+				IsProcessing = true;
+				await _saleEndpoint.PostSale(sale);
+			}
+			catch (Exception ex)
+			{ 
+			}
+			finally 
+			{
+				IsProcessing = false;
+			}
 		}
 
 		private bool _isProcessing = false;

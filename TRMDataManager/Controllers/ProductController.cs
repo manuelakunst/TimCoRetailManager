@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using TRMDataManager.Library.DataAccess;
-using TRMDataManager.Library.Internal.Models;
+using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Controllers
 {
@@ -17,6 +17,5 @@ namespace TRMDataManager.Controllers
             var data = new ProductData();
             return data.GetProducts();
         }
-
     }
 }
