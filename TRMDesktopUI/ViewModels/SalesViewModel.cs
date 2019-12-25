@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using AutoMapper;
+using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.Library.Helper;
 using TRMDesktopUI.Library.Models;
+using TRMDesktopUI.Models;
 
 namespace TRMDesktopUI.ViewModels
 {
@@ -16,12 +18,15 @@ namespace TRMDesktopUI.ViewModels
 		private readonly IProductEndpoint _productEndpoint;
 		private readonly ISaleEndpoint _saleEndpoint;
 		private IConfigHelper _configHelper;
+		private IMapper _mapper;
 
-		public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, ISaleEndpoint saleEndpoint)
+		public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, 
+			ISaleEndpoint saleEndpoint, IMapper mapper)
 		{
 			_productEndpoint = productEndpoint;
 			_saleEndpoint = saleEndpoint;
 			_configHelper = configHelper;
+			_mapper = mapper;
 		}
 
 		protected override async void OnViewLoaded(object view)
@@ -33,12 +38,13 @@ namespace TRMDesktopUI.ViewModels
 		private async Task LoadProducts()
 		{
 			var productList = await _productEndpoint.GetAll();
-			Products = new BindingList<ProductModel>(productList);
+			var productDisplayList = _mapper.Map<List<ProductDisplayModel>>(productList);
+			Products = new BindingList<ProductDisplayModel>(productDisplayList);
 		}
 
-		private BindingList<ProductModel> _products;
+		private BindingList<ProductDisplayModel> _products;
 
-		public BindingList<ProductModel> Products
+		public BindingList<ProductDisplayModel> Products
 		{
 			get { return _products; }
 			set
@@ -48,9 +54,9 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private ProductModel _selectedProduct;
+		private ProductDisplayModel _selectedProduct;
 
-		public ProductModel SelectedProduct
+		public ProductDisplayModel SelectedProduct
 		{
 			get { return _selectedProduct; }
 			set
@@ -61,10 +67,22 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
+		private CartItemDisplayModel _selectedCartItem;
+		public CartItemDisplayModel SelectedCartItem
+		{
+			get { return _selectedCartItem; }
+			set
+			{
+				_selectedCartItem = value;
+				NotifyOfPropertyChange(() => SelectedCartItem);
+				NotifyOfPropertyChange(() => CanRemoveFromCart);
+			}
+		}
 
-		private BindingList<CartItemModel> _cart = new BindingList<CartItemModel>();
 
-		public BindingList<CartItemModel> Cart
+		private BindingList<CartItemDisplayModel> _cart = new BindingList<CartItemDisplayModel>();
+
+		public BindingList<CartItemDisplayModel> Cart
 		{
 			get { return _cart; }
 			set
@@ -158,7 +176,7 @@ namespace TRMDesktopUI.ViewModels
 			var existingItemInCart = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
 			if (existingItemInCart == null)
 			{
-				var item = new CartItemModel
+				var item = new CartItemDisplayModel
 				{
 					Product = SelectedProduct,
 					QuantityInCart = ItemQuantity
@@ -169,9 +187,9 @@ namespace TRMDesktopUI.ViewModels
 			{
 				existingItemInCart.QuantityInCart += ItemQuantity;
 
-				// HACK: update the DisplayText of existing item in Cart
-				Cart.Remove(existingItemInCart);
-				Cart.Add(existingItemInCart);
+				//// HACK: update the DisplayText of existing item in Cart
+				//Cart.Remove(existingItemInCart);
+				//Cart.Add(existingItemInCart);
 			}
 
 			SelectedProduct.QuantityInStock -= ItemQuantity;
@@ -190,8 +208,7 @@ namespace TRMDesktopUI.ViewModels
 			{
 				var output = false;
 
-				// check, if something is selected in cart
-				if (true)
+				if (SelectedCartItem != null && SelectedCartItem.QuantityInCart > 0)
 					output = true;
 				return output;
 			}
@@ -199,6 +216,17 @@ namespace TRMDesktopUI.ViewModels
 
 		public void RemoveFromCart()
 		{
+			SelectedCartItem.Product.QuantityInStock += 1;
+			if (SelectedCartItem.QuantityInCart > 1)
+			{
+				// reduce Qty by 1
+				SelectedCartItem.QuantityInCart -= 1;
+			}
+			else
+			{
+				Cart.Remove(SelectedCartItem);
+			}
+
 			NotifyOfPropertyChange(() => SubTotal);
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);

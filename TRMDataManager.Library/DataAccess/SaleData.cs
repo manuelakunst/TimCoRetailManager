@@ -66,13 +66,5 @@ namespace TRMDataManager.Library.DataAccess
                 sql.SaveData("dbo.spSaleDetail_Insert", item, "TRMData");
             }
         }
-
-        //public List<ProductModel> GetProducts()
-        //{
-        //    var sql = new SqlDataAccess();
-
-        //    var output = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetAll", new { }, "TRMData");
-        //    return output;
-        //}
     }
 }
