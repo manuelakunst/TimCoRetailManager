@@ -231,6 +231,7 @@ namespace TRMDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
 			NotifyOfPropertyChange(() => Cart);
+			NotifyOfPropertyChange(() => CanAddToCart);
 			NotifyOfPropertyChange(() => CanCheckOut);
 		}
 
