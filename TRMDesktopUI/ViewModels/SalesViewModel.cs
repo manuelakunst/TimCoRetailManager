@@ -42,6 +42,17 @@ namespace TRMDesktopUI.ViewModels
 			Products = new BindingList<ProductDisplayModel>(productDisplayList);
 		}
 
+		private async Task ResetSalesView()
+		{
+			Cart = new BindingList<CartItemDisplayModel>();
+			await LoadProducts();
+
+			NotifyOfPropertyChange(() => SubTotal);
+			NotifyOfPropertyChange(() => Tax);
+			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckOut);
+		}
+
 		private BindingList<ProductDisplayModel> _products;
 
 		public BindingList<ProductDisplayModel> Products
@@ -269,6 +280,7 @@ namespace TRMDesktopUI.ViewModels
 			finally 
 			{
 				IsProcessing = false;
+				await ResetSalesView();
 			}
 		}
 
