@@ -14,7 +14,6 @@ namespace TRMDataManager.Library.DataAccess
         {
             // TODO: make it SOLID/DRY/better
 
-
             // create the Sale Details Model
             var details = new List<SaleDetailDBModel>();
             var productData = new ProductData();
@@ -52,19 +51,34 @@ namespace TRMDataManager.Library.DataAccess
             sale.Total = sale.SubTotal + sale.Tax;
 
             // save Sale to DB
-            var sql = new SqlDataAccess();
-            sql.SaveData<SaleDBModel>("dbo.spSale_Insert", sale, "TRMData");
-
-            // get the Sale Id 
-            sale.Id = sql.LoadData<int, dynamic>("dbo.spSale_Lookup", new { sale.CashierId, sale.SaleDate }, "TRMData")
-                .FirstOrDefault();
-
-            // finish saving the sale details
-            foreach(var item in details)
+            using (var sql = new SqlDataAccess())
             {
-                item.SaleId = sale.Id;
-                sql.SaveData("dbo.spSaleDetail_Insert", item, "TRMData");
+                try
+                {
+                    sql.StartTransaction("TRMData");
+
+                    sql.SaveDataInTransaction("dbo.spSale_Insert", sale);
+
+                    // get the Sale Id 
+                    sale.Id = sql.LoadDataInTransaction<int, dynamic>("dbo.spSale_Lookup", new { sale.CashierId, sale.SaleDate })
+                        .FirstOrDefault();
+
+                    // finish saving the sale details
+                    foreach (var item in details)
+                    {
+                        item.SaleId = sale.Id;
+                        sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
+                    }
+
+                    //sql.CommitTransaction();
+                }
+                catch ()
+                {
+                    sql.RollbackTransaction();
+                    throw;
+                }
             }
         }
+
     }
 }
