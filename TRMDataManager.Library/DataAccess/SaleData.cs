@@ -73,9 +73,7 @@ namespace TRMDataManager.Library.DataAccess
                         sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
                     }
 
-                    // Tims explizites Aufrufen von dieser Zeile verursacht bei mir eine Exception, weil 
-                    // später Dispose (am Ende dieses "using") das noch einmal aufruft
-                    //sql.CommitTransaction();
+                    sql.CommitTransaction();
                 }
                 catch
                 {
