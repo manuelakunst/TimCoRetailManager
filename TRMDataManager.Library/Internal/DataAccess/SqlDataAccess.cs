@@ -40,6 +40,11 @@ namespace TRMDataManager.Library.Internal.DataAccess
             }
         }
 
+
+
+        // ACHTUNG: SQL Transaction in C# sollte nur selten verwendet werden. 
+        // Das Offen-Halten der DB-Connection ist immer ein Risiko (Performanz!)
+
         private IDbConnection _connection;
         private IDbTransaction _transaction;
 

@@ -55,6 +55,9 @@ namespace TRMDataManager.Library.DataAccess
             {
                 try
                 {
+                    // ACHTUNG: SQL Transaction in C# sollte nur selten verwendet werden. 
+                    // Das Offen-Halten der DB-Connection ist immer ein Risiko (Performanz!)
+
                     sql.StartTransaction("TRMData");
 
                     sql.SaveDataInTransaction("dbo.spSale_Insert", sale);
@@ -70,9 +73,11 @@ namespace TRMDataManager.Library.DataAccess
                         sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
                     }
 
+                    // Tims explizites Aufrufen von dieser Zeile verursacht bei mir eine Exception, weil 
+                    // später Dispose (am Ende dieses "using") das noch einmal aufruft
                     //sql.CommitTransaction();
                 }
-                catch ()
+                catch
                 {
                     sql.RollbackTransaction();
                     throw;
