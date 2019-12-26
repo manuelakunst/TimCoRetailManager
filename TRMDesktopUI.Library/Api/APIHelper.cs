@@ -21,7 +21,7 @@ namespace TRMDesktopUI.Library.Api
             }
         }
 
-        private ILoggedInUserModel _loggedInUser;
+        private readonly ILoggedInUserModel _loggedInUser;
 
         public ILoggedInUserModel liu { get { return _loggedInUser; } }
 
@@ -88,6 +88,11 @@ namespace TRMDesktopUI.Library.Api
                     throw new Exception(response.ReasonPhrase);
                 }
             }
+        }
+
+        public void LogOffUser()
+        {
+            _apiClient.DefaultRequestHeaders.Clear();
         }
     }
 }

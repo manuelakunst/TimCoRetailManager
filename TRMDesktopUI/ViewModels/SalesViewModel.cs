@@ -274,8 +274,9 @@ namespace TRMDesktopUI.ViewModels
 				IsProcessing = true;
 				await _saleEndpoint.PostSale(sale);
 			}
-			catch (Exception ex)
-			{ 
+			catch (Exception)
+			{
+				
 			}
 			finally 
 			{

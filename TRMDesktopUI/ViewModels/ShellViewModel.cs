@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using TRMDesktopUI.EventModels;
+using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels
@@ -14,8 +15,8 @@ namespace TRMDesktopUI.ViewModels
         private SalesViewModel _salesVM;
         private IEventAggregator _events;
         private ILoggedInUserModel _user;
-
-        public ShellViewModel(SalesViewModel salesVM, IEventAggregator events, ILoggedInUserModel user)
+        private IAPIHelper _apiHelper;
+        public ShellViewModel(SalesViewModel salesVM, IEventAggregator events, ILoggedInUserModel user, IAPIHelper apiHelper)
         {            
             _salesVM = salesVM;
             _events = events;
@@ -23,6 +24,7 @@ namespace TRMDesktopUI.ViewModels
             _events.Subscribe(this);
 
             _user = user;
+            _apiHelper = apiHelper;
 
             ActivateItem(IoC.Get<LoginViewModel>());
         }
@@ -41,8 +43,8 @@ namespace TRMDesktopUI.ViewModels
 
         public void LogOut()
         {
-            // TODO reset logged user
-            _user.LogOffUser();
+            _user.ResetUser();
+            _apiHelper.LogOffUser();
             NotifyOfPropertyChange(() => IsUserLoggedIn);
             ActivateItem(IoC.Get<LoginViewModel>());
         }

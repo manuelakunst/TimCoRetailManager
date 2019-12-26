@@ -10,6 +10,8 @@ namespace TRMDesktopUI.Library.Api
 
         Task GetLoggedInUserInfo(string token);
 
+        void LogOffUser();
+
         HttpClient ApiClient { get; }
     }
 }
