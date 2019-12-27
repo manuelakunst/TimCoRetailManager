@@ -14,6 +14,7 @@ namespace TRMDataManager.Controllers
     [Authorize]
     public class SaleController : ApiController
     {
+        [Authorize(Roles = "Cashier")]
         public void Post(SaleModel sale)
         {
             var data = new SaleData();
@@ -22,9 +23,26 @@ namespace TRMDataManager.Controllers
             data.SaveSale(sale, userId);
         }
 
+        [Authorize(Roles = "Manager,Admin")]  // both roles are allowed to this function
         [Route("GetSalesReport")]
         public List<SaleReportModel> GetSalesReport()
         {
+            // Demo for role dependant behaviour
+            //
+            if(RequestContext.Principal.IsInRole("Admin"))
+            {
+                // do admin stuff
+            }
+            else if(RequestContext.Principal.IsInRole("Manager"))
+            {
+                // do manager stuff
+            }
+            else
+            {
+                // default
+            }
+
+
             var data = new SaleData();
 
             return data.GetSaleReport();
