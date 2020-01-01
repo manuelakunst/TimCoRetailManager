@@ -6,6 +6,11 @@ namespace TRMDesktopUI.Library.Api
 {
     public interface IUserEndpoint
     {
-        Task<List<UserModel>> GetUsers();
+        Task<List<UserModel>> GetAllUsers();
+        Task<Dictionary<string, string>> GetAllRoles();
+
+        Task AddUserToRole(string userId, string roleName);
+
+        Task RemoveUserFromRole(string userId, string roleName);
     }
 }
