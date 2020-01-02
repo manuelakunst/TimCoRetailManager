@@ -165,10 +165,23 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
+		private bool _isProcessing = false;
+
+		public bool IsProcessing
+		{
+			get { return _isProcessing; }
+			set
+			{
+				_isProcessing = value;
+				NotifyOfPropertyChange(() => IsProcessing);
+			}
+		}
+
 		public async void AddSelectedRole()
 		{
 			try
 			{
+				IsProcessing = true;
 				await _userEndpoint.AddUserToRole(SelectedUser.Id, SelectedAvailableRole);
 
 				UserRoles.Add(SelectedAvailableRole);
@@ -176,17 +189,33 @@ namespace TRMDesktopUI.ViewModels
 			}
 			catch (Exception)
 			{
-
 				throw;
+			}
+			finally
+			{
+				IsProcessing = false;
 			}
 		}
 
 		public async void RemoveSelectedRole()
 		{
-			await _userEndpoint.RemoveUserFromRole(SelectedUser.Id, SelectedUserRole);
+			try
+			{
+				IsProcessing = true;
+				await _userEndpoint.RemoveUserFromRole(SelectedUser.Id, SelectedUserRole);
 
-			UserRoles.Remove(SelectedUserRole);
-			AvailableRoles.Add(SelectedUserRole);
+				var selRole = SelectedUserRole;
+				UserRoles.Remove(selRole);
+				AvailableRoles.Add(selRole);
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			finally
+			{
+				IsProcessing = false;
+			}
 		}
 	}
 }

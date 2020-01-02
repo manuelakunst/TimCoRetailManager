@@ -78,7 +78,9 @@
                 <ComboBox x:Name="AvailableRoles" 
                           SelectedItem="SelectedAvailableRole"
                           MinWidth="50"/>
-                <Button x:Name="AddSelectedRole" Content="Add Role" Margin="5 0 0 0" />
+                <Button x:Name="AddSelectedRole" 
+                        Content="Add Role" 
+                        Margin="5 0 0 0" />
             </StackPanel>
         </StackPanel>
 
