@@ -158,7 +158,7 @@ namespace TRMDesktopUI.ViewModels
 
 			foreach(var role in roles)
 			{
-				if(UserRoles.IndexOf(role.Value) < 0)
+				if(!UserRoles.Contains(role.Value))
 				{
 					AvailableRoles.Add(role.Value);
 				}
