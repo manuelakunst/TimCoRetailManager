@@ -34,17 +34,17 @@ namespace TRMApi.Controllers
         {
             //// HACK for Init some user / role data
             //string[] roles = { "Admin", "Manager", "Cashier" };
-            //foreach(var role in roles)
+            //foreach (var role in roles)
             //{
             //    var roleExists = await _roleManager.RoleExistsAsync(role);
-            //    if(!roleExists)
+            //    if (!roleExists)
             //    {
             //        await _roleManager.CreateAsync(new IdentityRole(role));
             //    }
             //}
 
             //var user = await _userManager.FindByEmailAsync("mail@manuelakunst.de");
-            //if(user != null)
+            //if (user != null)
             //{
             //    await _userManager.AddToRoleAsync(user, "Admin");
             //    await _userManager.AddToRoleAsync(user, "Cashier");
