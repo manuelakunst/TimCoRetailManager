@@ -30,7 +30,7 @@ namespace TRMApi.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Privacy()
+        public /*async Task<IActionResult>*/ IActionResult Privacy()
         {
             //// HACK for Init some user / role data
             //string[] roles = { "Admin", "Manager", "Cashier" };

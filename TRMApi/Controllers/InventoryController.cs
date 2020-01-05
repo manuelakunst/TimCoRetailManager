@@ -24,6 +24,7 @@ namespace TRMApi.Controllers
         }
 
         [Authorize(Roles = "Manager,Admin")] // =OR
+        [HttpGet]
         public List<InventoryModel> Get()
         {
             var data = new InventoryData(_config);
@@ -34,6 +35,7 @@ namespace TRMApi.Controllers
         //[Authorize(Roles = "Warehouse")] // =AND 
         //[Authorize(Roles = "Admin")]
         [Authorize(Roles = "Admin")]
+        [HttpPost]
         public void Post(InventoryModel item)
         {
             var data = new InventoryData(_config);
