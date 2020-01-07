@@ -61,7 +61,7 @@ namespace TRMApi.Controllers
                 var appUser = new ApplicationUserModel
                 {
                     Id = user.Id,
-                    Email = user.Email,
+                    Email = user.Email
                 };
 
                 appUser.Roles = userRoles.Where(x => x.UserId == appUser.Id).ToDictionary(key => key.RoleId, val => val.Name);

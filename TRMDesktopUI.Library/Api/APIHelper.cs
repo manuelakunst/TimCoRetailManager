@@ -50,7 +50,7 @@ namespace TRMDesktopUI.Library.Api
                 new KeyValuePair<string, string>("password", password)
             });
 
-            using (HttpResponseMessage response = await _apiClient.PostAsync("/Token", data))
+            using (HttpResponseMessage response = await _apiClient.PostAsync("/token", data))
             {
                 if (response.IsSuccessStatusCode)
                 {

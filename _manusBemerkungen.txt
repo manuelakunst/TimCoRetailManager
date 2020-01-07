@@ -1,0 +1,8 @@
+---------------------------------------------------
+20290107 Video 34 
+Problem:
+Ich kann in .NET API in Swagger kein Token mitgeben
+
+Lösung evt:
+https://stackoverflow.com/questions/43447688/setting-up-swagger-asp-net-core-using-the-authorization-headers-bearer
+---------------------------------------------------
