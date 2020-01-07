@@ -25,6 +25,7 @@ namespace TRMApi.Controllers
         }
 
         [Authorize(Roles = "Cashier")]
+        [HttpPost]
         public void Post(SaleModel sale)
         {
             var data = new SaleData(_config);
@@ -35,6 +36,7 @@ namespace TRMApi.Controllers
 
         [Authorize(Roles = "Manager,Admin")]  // both roles are allowed to this function
         [Route("GetSalesReport")]
+        [HttpGet]
         public List<SaleReportModel> GetSalesReport()
         {
             // Demo for role dependant behaviour

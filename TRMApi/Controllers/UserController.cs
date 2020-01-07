@@ -34,6 +34,7 @@ namespace TRMApi.Controllers
             _config = config;
         }
 
+        [HttpGet]
         public UserModel GetById()
         {
             //var userId = RequestContext.Principal.Identity.GetUserId();

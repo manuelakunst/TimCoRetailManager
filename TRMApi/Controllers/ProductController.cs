@@ -23,6 +23,7 @@ namespace TRMApi.Controllers
             _config = config;
         }
 
+        [HttpGet]
         public List<ProductModel> GetAll()
         {
             var data = new ProductData(_config);
