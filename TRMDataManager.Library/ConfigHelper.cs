@@ -14,6 +14,8 @@ namespace TRMDataManager.Library
             var taxRateText = ConfigurationManager.AppSettings["taxRate"];
             if (Decimal.TryParse(taxRateText, out decimal output))
                 return output / 100;
+            else
+                return 8.75M / 100;
 
             throw new ConfigurationErrorsException("The tax rate is not set up properly");
         }
