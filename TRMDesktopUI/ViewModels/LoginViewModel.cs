@@ -30,7 +30,11 @@ namespace TRMDesktopUI.ViewModels
 		{
 #if DEBUG
 			var currentDir = Environment.CurrentDirectory;
+
 			var topDir = currentDir.Replace("TRMDesktopUI\\bin\\Debug", "");
+			if (topDir.EndsWith("netcoreapp3.0"))
+				topDir = topDir.Replace("\\netcoreapp3.0", "");
+
 			string path = topDir + "myLoginForDebug.txt";
 
 			// This text is added only once to the file.
