@@ -30,13 +30,6 @@ namespace TRMDesktopUI.ViewModels
             ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
         }
 
-        //public void Handle(LogOnEvent message)
-        //{
-        //    ActivateItem(_salesVM);
-
-        //    NotifyOfPropertyChange(() => IsUserLoggedIn);
-        //}
-
         public void ExitApplication()
         {
             TryCloseAsync();
@@ -57,7 +50,7 @@ namespace TRMDesktopUI.ViewModels
 
         public async Task HandleAsync(LogOnEvent message, CancellationToken cancellationToken)
         {
-            await ActivateItemAsync(_salesVM, cancellationToken);
+            await ActivateItemAsync(IoC.Get<SalesViewModel>(), cancellationToken);
 
             NotifyOfPropertyChange(() => IsUserLoggedIn);
         }
