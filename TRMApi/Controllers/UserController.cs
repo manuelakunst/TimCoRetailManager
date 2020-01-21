@@ -23,15 +23,15 @@ namespace TRMApi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IConfiguration _config;
+        private readonly IUserData _userData;
 
         public UserController(ApplicationDbContext context, 
                                 UserManager<IdentityUser> userManager,
-                                IConfiguration config)
+                                IUserData userData)
         {
             _context = context;
             _userManager = userManager;
-            _config = config;
+            _userData = userData;
         }
 
         [HttpGet]
@@ -40,8 +40,7 @@ namespace TRMApi.Controllers
             //var userId = RequestContext.Principal.Identity.GetUserId();
             // all in .NET Core is changed to...
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var data = new UserData(_config);
-            return data.GetUserById(userId).First();
+            return _userData.GetUserById(userId).First();
         }
 
         [Authorize(Roles = "Admin")]

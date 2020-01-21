@@ -9,13 +9,15 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-    public class SaleData
+    public class SaleData : ISaleData
     {
-        private readonly IConfiguration _config;
+        private readonly IProductData _prodData;
+        private readonly ISqlDataAccess _sqlData;
 
-        public SaleData(IConfiguration config)
+        public SaleData(IProductData prodData, ISqlDataAccess sqlData)
         {
-            this._config = config;
+            _prodData = prodData;
+            _sqlData = sqlData;
         }
         public void SaveSale(SaleModel saleInfo, string cashierId)
         {
@@ -23,7 +25,6 @@ namespace TRMDataManager.Library.DataAccess
 
             // create the Sale Details Model
             var details = new List<SaleDetailDBModel>();
-            var productData = new ProductData(_config);
             var taxRate = ConfigHelper.GetTaxRate();
 
             foreach (var item in saleInfo.SaleDetails)
@@ -34,7 +35,7 @@ namespace TRMDataManager.Library.DataAccess
                     Quantity = item.Quantity
                 };
 
-                var productInfo = productData.GetProductById(detail.ProductId);
+                var productInfo = _prodData.GetProductById(detail.ProductId);
 
                 if (productInfo == null)
                 {
@@ -58,43 +59,38 @@ namespace TRMDataManager.Library.DataAccess
             sale.Total = sale.SubTotal + sale.Tax;
 
             // save Sale to DB
-            using (var sql = new SqlDataAccess(_config))
+            try
             {
-                try
+                // ACHTUNG: SQL Transaction in C# sollte nur selten verwendet werden. 
+                // Das Offen-Halten der DB-Connection ist immer ein Risiko (Performanz!)
+
+                _sqlData.StartTransaction("TRMData");
+
+                _sqlData.SaveDataInTransaction("dbo.spSale_Insert", sale);
+
+                // get the Sale Id 
+                sale.Id = _sqlData.LoadDataInTransaction<int, dynamic>("dbo.spSale_Lookup", new { sale.CashierId, sale.SaleDate })
+                    .FirstOrDefault();
+
+                // finish saving the sale details
+                foreach (var item in details)
                 {
-                    // ACHTUNG: SQL Transaction in C# sollte nur selten verwendet werden. 
-                    // Das Offen-Halten der DB-Connection ist immer ein Risiko (Performanz!)
-
-                    sql.StartTransaction("TRMData");
-
-                    sql.SaveDataInTransaction("dbo.spSale_Insert", sale);
-
-                    // get the Sale Id 
-                    sale.Id = sql.LoadDataInTransaction<int, dynamic>("dbo.spSale_Lookup", new { sale.CashierId, sale.SaleDate })
-                        .FirstOrDefault();
-
-                    // finish saving the sale details
-                    foreach (var item in details)
-                    {
-                        item.SaleId = sale.Id;
-                        sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
-                    }
-
-                    sql.CommitTransaction();
+                    item.SaleId = sale.Id;
+                    _sqlData.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
                 }
-                catch
-                {
-                    sql.RollbackTransaction();
-                    throw;
-                }
+
+                _sqlData.CommitTransaction();
+            }
+            catch
+            {
+                _sqlData.RollbackTransaction();
+                throw;
             }
         }
 
         public List<SaleReportModel> GetSaleReport()
         {
-            var sql = new SqlDataAccess(_config);
-
-            var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
+            var output = _sqlData.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
 
             return output;
         }
